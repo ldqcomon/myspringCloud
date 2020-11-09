@@ -1,0 +1,11 @@
+server:
+  port: 8181
+
+spring:
+  application:
+    name: zuul-server
+zuul:
+  routes:
+    service-order:
+       path: /service-product/**
+       url: http://127.0.0.1:9001

@@ -1,0 +1,88 @@
+server:
+  port: 9002
+spring:
+  application:
+      name: service-order
+  cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8080
+  zipkin:
+    # zipkin server 的请求地址
+    base-url: http://127.0.0.1:9411
+    sender:
+    # 请求方式:默认是以http:web 请求的方式向zipkin server 发送数据(数据默认存于内存中)
+      type: rabbit
+  sleuth:
+    sampler:
+      # 采样百分比
+      probability: 1.0
+  rabbitmq:
+    username: guest
+    password: guest
+    listener:
+      direct:
+        # 重试策略
+        retry:
+          enabled: true
+      simple:
+        retry:
+          enabled: true
+    host: localhost
+    port: 5672
+
+
+
+eureka:
+  instance:
+    #使用ip地址注册
+    prefer-ip-address: true
+    # 向注册中心注册服务id
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+  client:
+    service-url:
+      # eureka服务地址
+      defaultZone: http://localhost:9000/eureka/,http://localhost:8000/eureka/
+
+#service-product:
+#  ribbon:
+##    NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule
+#    ConnectTimeout: 250 # Ribbon的连接超时时间
+#    ReadTimeout: 1000 # Ribbon的数据读取超时时间
+#    OkToRetryOnAllOperations: true # 是否对所有操作都进行重试
+#    MaxAutoRetriesNextServer: 1 # 切换实例的重试次数
+#    MaxAutoRetries: 2 # 对当前实例的重试次数
+
+feign:
+  hystrix:
+    # 在feign中开启hystrix熔断
+    enabled: true
+  client:
+    config:
+      service-product:
+        # 配置日志
+        loggerLevel: FULL
+  sentinel:
+    # 在feign中开启sentinel的熔断
+    enabled: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+
+
+#hystrix:
+#  command:
+#    default:
+#      execution:
+#        isolation:
+#          thread:
+#            timeoutInMilliseconds: 4000
+
+
+#logging:
+#  level:
+#    root: DEBUG
